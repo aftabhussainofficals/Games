@@ -1,0 +1,8 @@
+[
+  { "name": "Aftab", "games": 8, "highScore": 300, "highLevel": 1, "lastMode": "Normal" },
+  { "name": "Ali", "games": 1, "highScore": 0, "highLevel": 1, "lastMode": "Normal" },
+  { "name": "Asim", "games": 1, "highScore": 100, "highLevel": 1, "lastMode": "Normal" },
+  { "name": "Aslam", "games": 1, "highScore": 0, "highLevel": 1, "lastMode": "Normal" },
+  { "name": "Muzamil", "games": 1, "highScore": 0, "highLevel": 1, "lastMode": "Normal" },
+  { "name": "Abcd", "games": 1, "highScore": 0, "highLevel": 1, "lastMode": "Normal" }
+]
