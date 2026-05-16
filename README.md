@@ -37,31 +37,31 @@ The `images/` folder contains representative screenshots that demonstrate the ga
 
 ### Gameplay Board
 
-![Gameplay Board](images/GameBord.jpg)
+![Gameplay Board](tetris/images/GameBord.jpg)
 
 Core gameplay board showing falling tetrominoes, line clearing, and score details.
 
 ### In-Game Menu
 
-![In-Game Menu](images/GamePlayMenu.jpg)
+![In-Game Menu](tetris/images/GamePlayMenu.jpg)
 
 Menu overlay displayed during play, including pause controls and navigation.
 
 ### Mode Selection
 
-![Mode Selection](images/ModsSelection.jpg)
+![Mode Selection](tetris/images/ModsSelection.jpg)
 
 Choice screen for selecting Normal or Challenge mode.
 
 ### Countdown Screen
 
-![Countdown Screen](images/GameCountdown.jpg)
+![Countdown Screen](tetris/images/GameCountdown.jpg)
 
 Pre-game countdown display that appears before gameplay begins.
 
 ### Endgame Summary
 
-![Endgame Summary](images/EndMenu(scoreGameover).jpeg)
+![Endgame Summary](tetris/images/EndMenu(scoreGameover).jpeg)
 
 Final screen showing game over status, score, and leaderboard details.
 
