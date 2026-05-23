@@ -46,19 +46,15 @@ vector<PlayerRecord> loadScores() {
         }
 
         string block = content.substr(start, end - start + 1);
-        PlayerRecord record;
-        record.name = extractValue(block, "name");
-        record.games = stoi("0" + extractValue(block, "games"));
-        record.highScore = stoi("0" + extractValue(block, "highScore"));
-        record.highLevel = stoi("0" + extractValue(block, "highLevel"));
-        record.lastMode = extractValue(block, "lastMode");
-        
-        if (record.lastMode.empty()) {
-            record.lastMode = "Normal";
-        }
+        string rName  = extractValue(block, "name");
+        int    rGames = stoi("0" + extractValue(block, "games"));
+        int    rHS    = stoi("0" + extractValue(block, "highScore"));
+        int    rHL    = stoi("0" + extractValue(block, "highLevel"));
+        string rMode  = extractValue(block, "lastMode");
+        if (rMode.empty()) rMode = "Normal";
 
-        if (!record.name.empty()) {
-            records.push_back(record);
+        if (!rName.empty()) {
+            records.push_back(PlayerRecord(rName, rGames, rHS, rHL, rMode));
         }
         position = end + 1;
     }
@@ -70,11 +66,11 @@ void saveScores(vector<PlayerRecord>& records) {
     file << "[\n";
     
     for (int i = 0; i < records.size(); i++) {
-        file << "  { \"name\": \"" << records[i].name << "\",";
-        file << " \"games\": " << records[i].games << ",";
-        file << " \"highScore\": " << records[i].highScore << ",";
-        file << " \"highLevel\": " << records[i].highLevel << ",";
-        file << " \"lastMode\": \"" << records[i].lastMode << "\" }";
+        file << "  { \"name\": \"" << records[i].getName() << "\",";
+        file << " \"games\": " << records[i].getGames() << ",";
+        file << " \"highScore\": " << records[i].getHighScore() << ",";
+        file << " \"highLevel\": " << records[i].getHighLevel() << ",";
+        file << " \"lastMode\": \"" << records[i].getLastMode() << "\" }";
         
         if (i < records.size() - 1) {
             file << ",";
@@ -90,30 +86,19 @@ void updatePlayer(vector<PlayerRecord>& records, string name, int score, int lev
     int foundIndex = -1;
     
     for (int i = 0; i < records.size(); i++) {
-        if (records[i].name == name) {
+        if (records[i].getName() == name) {
             foundIndex = i;
             break;
         }
     }
 
     if (foundIndex == -1) {
-        PlayerRecord newRecord;
-        newRecord.name = name;
-        newRecord.games = 1;
-        newRecord.highScore = score;
-        newRecord.highLevel = level;
-        newRecord.lastMode = mode;
-        records.push_back(newRecord);
+        records.push_back(PlayerRecord(name, 1, score, level, mode));
     } else {
-        records[foundIndex].games++;
-        records[foundIndex].lastMode = mode;
-        
-        if (score > records[foundIndex].highScore) {
-            records[foundIndex].highScore = score;
-        }
-        if (level > records[foundIndex].highLevel) {
-            records[foundIndex].highLevel = level;
-        }
+        records[foundIndex].incrementGames();
+        records[foundIndex].setLastMode(mode);
+        records[foundIndex].updateHighScore(score);
+        records[foundIndex].updateHighLevel(level);
     }
     
     saveScores(records);

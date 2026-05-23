@@ -1,95 +1,78 @@
-#include <iostream>
-#include <string>
-#include <cstdlib>
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include "Game.h"
 
-using namespace std;
+void cls() { system("cls"); }
 
-// ANSI color codes
-#define CYAN    "\033[96m"
-#define YELLOW  "\033[93m"
-#define GREEN   "\033[92m"
-#define RED     "\033[91m"
-#define WHITE   "\033[97m"
-#define RESET   "\033[0m"
-
-void enableANSI() {
-#ifdef _WIN32
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    DWORD mode = 0;
-    GetConsoleMode(h, &mode);
-    SetConsoleMode(h, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-#endif
-}
-
-void clearScreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
-void printMenu() {
-    clearScreen();
+void drawMenu(int selected, vector<Game*>& allGames) {
+    cls();
     cout << "\n";
-    cout << CYAN  "  ╔══════════════════════════════╗\n";
-    cout << CYAN  "  ║" YELLOW "        GAMES  ARCADE         " CYAN "║\n";
-    cout << CYAN  "  ╠══════════════════════════════╣\n";
-    cout << CYAN  "  ║  " GREEN  "1. Tetris                   " CYAN "║\n";
-    cout << CYAN  "  ║  " RED    "2. Not Available            " CYAN "║\n";
-    cout << CYAN  "  ║  " RED    "3. Not Available            " CYAN "║\n";
-    cout << CYAN  "  ║  " WHITE  "0. Exit                     " CYAN "║\n";
-    cout << CYAN  "  ╚══════════════════════════════╝" RESET "\n";
-    cout << "\n  " YELLOW "Select an option: " RESET;
+    cout << "   ==============================\n";
+    cout << "  |         GAME  HUB            |\n";
+    cout << "   ==============================\n\n";
+
+    for (int i = 0; i < 5; i++) {
+        string label;
+        if      (i < 3)  label = allGames[i]->getTitle();
+        else if (i == 3) label = "Random Game";
+        else             label = "Exit";
+
+        if (i == selected)
+            cout << "  \033[32m > " << label << " \033[0m\n";
+        else
+            cout << "     " << label << "\n";
+    }
+
+    cout << "\n  W/S to navigate, ENTER to select\n";
 }
 
 int main() {
-#ifdef _WIN32
-    SetConsoleOutputCP(65001);
-    enableANSI();
-#endif
-    int choice;
+    srand((unsigned)time(nullptr));
+    SetConsoleOutputCP(CP_UTF8);
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode = 0;
+    GetConsoleMode(hOut, &mode);
+    SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+    hideCursor();
+
+    vector<Game*> allGames = {
+        new TetrisGame(),
+        new UnavailableGame("Snake"),
+        new UnavailableGame("Breakout")
+    };
+
+    int selected = 0;
+    const int TOTAL = 5;
+
+    drawMenu(selected, allGames);
 
     while (true) {
-        printMenu();
-        cin >> choice;
+        int ch = _getch();
+        if (ch == 0 || ch == 224) ch = _getch();
 
-        switch (choice) {
-            case 1:
-                clearScreen();
-                cout << "\n  Launching Tetris...\n\n";
-#ifdef _WIN32
-                system("start \"\" \"tetris\\tetris.exe\"");
-#else
-                system("./tetris/tetris");
-#endif
-                cout << "\n  Press Enter to return to menu...";
-                cin.ignore();
-                cin.get();
+        if (ch == 'w' || ch == 'W' || ch == 72) {
+            selected = (selected - 1 + TOTAL) % TOTAL;
+            drawMenu(selected, allGames);
+        } else if (ch == 's' || ch == 'S' || ch == 80) {
+            selected = (selected + 1) % TOTAL;
+            drawMenu(selected, allGames);
+        } else if (ch == '\r') {
+            if (selected >= 0 && selected <= 2) {
+                allGames[selected]->play();              // polymorphic call
+            } else if (selected == 3) {
+                // pick randomly from ALL games — play() handles unavailable itself
+                int idx = rand() % 3;
+                cls();
+                cout << "\n  \033[33mRandomly selected: \033[32m"
+                     << allGames[idx]->getTitle() << "\033[0m\n\n";
+                allGames[idx]->play();                   // polymorphic call
+            } else if (selected == 4) {
                 break;
-
-            case 2:
-            case 3:
-                clearScreen();
-                cout << "\n  This game is not available yet.\n";
-                cout << "\n  Press Enter to return to menu...";
-                cin.ignore();
-                cin.get();
-                break;
-
-            case 0:
-                clearScreen();
-                cout << "\n  Goodbye!\n\n";
-                return 0;
-
-            default:
-                cout << "\n  Invalid option. Press Enter to try again...";
-                cin.ignore();
-                cin.get();
-                break;
+            }
+            drawMenu(selected, allGames);
         }
     }
+
+    for (Game* g : allGames) delete g;
+    cls();
+    cout << "\n  Goodbye!\n\n";
+    return 0;
 }

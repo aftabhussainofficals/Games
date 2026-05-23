@@ -4,16 +4,13 @@
 #include "../../include/game/GameInput.h"
 #include "../../include/game/GameDraw.h"
 
-Game::Game(bool challenge) {
-    score        = 0;
-    level        = 1;
-    gravityDelay = 500;
-    gameOver     = false;
-    paused       = false;
-    showControls = false;
-    isChallenge  = challenge;
-    startTime    = time(nullptr);
+Game::Game(bool challenge) : BaseGame() {
+    isChallengeMember = challenge;
     spawnNext(*this);
+}
+
+string Game::getTimeDisplay() const {
+    return formatTime(elapsedSeconds(startTime));
 }
 
 void Game::run(vector<PlayerRecord>& records, string playerName, string mode) {
@@ -22,13 +19,13 @@ void Game::run(vector<PlayerRecord>& records, string playerName, string mode) {
 
     DWORD lastTick = GetTickCount();
 
-    while (!gameOver) {
+    while (!isGameOver()) {
         handleInput(*this);
 
         DWORD now     = GetTickCount();
         DWORD elapsed = now - lastTick;
 
-        if (elapsed >= gravityDelay) {
+        if (elapsed >= (DWORD)gravityDelay) {
             updateGame(*this);
             lastTick = GetTickCount();
         }
@@ -37,7 +34,7 @@ void Game::run(vector<PlayerRecord>& records, string playerName, string mode) {
         Sleep(16);
     }
 
-    // save score first so leaderboard inside showGameOver is up to date
+    gameOver = true;
     updatePlayer(records, playerName, score, level, mode);
     showGameOver(*this, records, playerName);
     showCursor();

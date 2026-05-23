@@ -1,4 +1,5 @@
 #include "../include/game/Game.h"
+#include "../include/game/ChallengeGame.h"
 #include "../include/db/ScoreDB.h"
 
 int main() {
@@ -21,14 +22,13 @@ int main() {
 
         showCountdown();
 
-        Game game(challenge);
-        string mode;
         if (challenge) {
-            mode = "Challenge";
+            ChallengeGame game;
+            game.run(records, playerName, "Challenge");
         } else {
-            mode = "Normal";
+            Game game(false);
+            game.run(records, playerName, "Normal");
         }
-        game.run(records, playerName, mode);
     }
 
     clearScreen(); moveTop();

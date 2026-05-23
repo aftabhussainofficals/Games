@@ -55,14 +55,14 @@ void lockAndScore(Game& game) {
 }
 
 void updateGame(Game& game) {
-    if (game.paused || game.gameOver) return;
+    if (game.paused || game.isGameOver()) return;
 
     if (!game.board.hasCollision(game.currentPiece, game.currentPiece.col, game.currentPiece.row + 1))
         game.currentPiece.row++;
     else
         lockAndScore(game);
 
-    if (game.isChallenge) {
+    if (game.isChallenge()) {
         if (game.score >= game.TARGET_SCORE) game.gameOver = true;
         if (remainingSeconds(game.startTime, game.CHALLENGE_SECS) == 0) game.gameOver = true;
     }
