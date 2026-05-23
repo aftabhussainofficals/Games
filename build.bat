@@ -8,7 +8,7 @@ popd
 
 echo.
 echo Building Game Hub...
-g++ main.cpp -I . -o GameHub.exe
+g++ Menu.cpp -I . -o Games.exe
 if %errorlevel% equ 0 (
     echo.
     echo Build successful! Run GameHub.exe to start.
